@@ -10,7 +10,7 @@ import AppContext from '../context/AppContext'
 import { useState } from 'react';
 import EditEmployee from '../components/EditEmployee';
 import AddEmployee from '../components/AddEmployee';
-import DelComponent from '../components/delComponent';
+import DelComponent from '../components/DelComponent';
 
 const Employee = () => {
 
