@@ -29,11 +29,11 @@ function App() {
       url: url, token: token, setToken: setToken 
     }}>
       <Routes>
-        <Route path='/' element={<Dashboard />} />
-        <Route path='/login' element={<ProtectedRoute element={<LoginPage />} /> }  />
-        <Route path='/employee' element={<ProtectedRoute element={<Employee />} /> } />
-        <Route path='/logs' element={<ProtectedRoute element={<Logs />} /> } />
-        <Route path='/teams' element={<ProtectedRoute element={<Teams />} /> } />
+        <Route path='/' element={<ProtectedRoute element={<Dashboard />} />} />
+        <Route path='/login' element={<LoginPage /> }  />
+        <Route path='/employee' element={<ProtectedRoute element={<Employee />} />} />
+        <Route path='/logs' element={<ProtectedRoute element={<Logs />}/>}   />
+        <Route path='/teams' element={<ProtectedRoute element={<Teams />} />}  />
       </Routes>
     </AppContext.Provider>
   )
