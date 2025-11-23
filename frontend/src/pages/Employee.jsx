@@ -110,7 +110,7 @@ const Employee = () => {
 
                     <div className='flex justify-between items-center'>
                         <h1 className='text-xl font-bold'>Employee</h1>
-                        <button className='min-w-[140px] min-h-[35px] flex items-center justify-center gap-2 cursor-pointer rounded bg-blue-500 text-white font-medium text-md'>
+                        <button onClick={() => setOpenAddEmployee(true)} className='min-w-[140px] min-h-[35px] flex items-center justify-center gap-2 cursor-pointer rounded bg-blue-500 text-white font-medium text-md'>
                             Add Employee
                         </button>
                     </div>

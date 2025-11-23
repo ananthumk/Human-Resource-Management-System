@@ -19,7 +19,8 @@ function App() {
     setToken(token)
   })
 
-  const url = 'http://localhost:5000/api/'
+  // const url = 'http://localhost:5000/api/'
+  const url = 'https://human-resource-management-system-c8rg.onrender.com/api/'
 
   return (
     <AppContext.Provider value={{
