@@ -339,19 +339,7 @@ const DashBoard = () => {
           </div>
         </div>
 
-        {/* System Info Footer */}
-        <div className="mt-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-md p-6 text-white">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-bold">Human Resource Management System</h3>
-              <p className="text-sm text-blue-100 mt-1">Efficiently manage your organization's workforce</p>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <MdAccessTime className="w-5 h-5" />
-              <span>Last updated: {new Date().toLocaleTimeString()}</span>
-            </div>
-          </div>
-        </div>
+       
       </div>
     </div>
   )

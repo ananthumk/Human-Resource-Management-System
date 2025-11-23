@@ -88,7 +88,7 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className='md:hidden p-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors'
+            className='md:hidden p-2 bg-white text-bg-9000 rounded-md  transition-colors'
             aria-label='Toggle menu'
           >
             {isMenuOpen ? (
@@ -103,7 +103,7 @@ const Header = () => {
       {/* Mobile Dropdown Menu */}
       {isMenuOpen && (
         <div className='fixed top-[68px] right-4 md:hidden z-50 animate-slide-down'>
-          <div className='bg-gray-900 text-white rounded-lg shadow-2xl overflow-hidden'>
+          <div className='bg-white text-gray-900 rounded-lg shadow-2xl overflow-hidden'>
             <nav className='py-4 px-4 flex flex-col gap-1'>
               {menuItems.map((item, index) => (
                 <button
@@ -112,7 +112,7 @@ const Header = () => {
                   className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all ${
                     isActive(item.path)
                       ? 'bg-blue-600 text-white'
-                      : 'text-gray-200 hover:text-white hover:bg-gray-700'
+                      : 'text-gray-800 hover:bg-gray-700'
                   }`}
                 >
                   <item.icon className='w-5 h-5' />

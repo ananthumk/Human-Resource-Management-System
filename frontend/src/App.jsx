@@ -9,6 +9,7 @@ import { Route, Routes } from 'react-router-dom'
 import Employee from './pages/Employee'
 import Logs from './pages/Logs'
 import Teams from './pages/Teams'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   const [token, setToken] = useState(null)
@@ -28,10 +29,10 @@ function App() {
     }}>
       <Routes>
         <Route path='/' element={<Dashboard />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/employee' element={<Employee />} />
-        <Route path='/logs' element={<Logs />} />
-        <Route path='/teams' element={<Teams />} />
+        <Route path='/login' element={<ProtectedRoute element={<LoginPage />} /> }  />
+        <Route path='/employee' element={<ProtectedRoute element={<Employee />} /> } />
+        <Route path='/logs' element={<ProtectedRoute element={<Logs />} /> } />
+        <Route path='/teams' element={<ProtectedRoute element={<Teams />} /> } />
       </Routes>
     </AppContext.Provider>
   )
