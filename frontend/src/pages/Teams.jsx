@@ -14,7 +14,6 @@ const Teams = () => {
   const [addMemberTeamId, setAddMemberTeamId] = useState(null)
   const [selectedEmployeeId, setSelectedEmployeeId] = useState('')
   const [addForm, setAddForm] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
   const { url, token } = useContext(AppContext)
 
@@ -54,7 +53,7 @@ const Teams = () => {
   const startEditing = (team) => {
     setEditTeamId(team.id)
     setEditForm({ name: team.name, description: team.description })
-    setAddMemberTeamId(null) // Close add member form when editing
+    setAddMemberTeamId(null)
   }
 
   const cancelEditing = () => {
@@ -85,7 +84,7 @@ const Teams = () => {
 
   const deleteTeam = async (id) => {
     if (!window.confirm('Are you sure you want to delete this team?')) return
-    
+
     try {
       const response = await axios.delete(`${url}teams/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -107,7 +106,7 @@ const Teams = () => {
     } else {
       setAddMemberTeamId(teamId)
       setSelectedEmployeeId('')
-      setEditTeamId(null) // Close edit form when adding member
+      setEditTeamId(null)
     }
   }
 
@@ -117,7 +116,6 @@ const Teams = () => {
       return
     }
 
-    setLoading(true)
     try {
       const response = await axios.post(
         `${url}teams/${teamId}/assign`,
@@ -131,42 +129,36 @@ const Teams = () => {
 
       if (response.status === 200 || response.status === 201) {
         showMessage('success', 'Member added successfully!')
-        await fetchTeams() // Refresh teams to show updated member list
+        await fetchTeams()
         setAddMemberTeamId(null)
         setSelectedEmployeeId('')
       }
     } catch (error) {
       console.log(error)
       showMessage('error', error.response?.data?.error || 'Failed to add member')
-    } finally {
-      setLoading(false)
     }
   }
 
+  // Updated: use DELETE with axios including body data for employeeId
   const handleRemoveMember = async (teamId, employeeId) => {
     if (!window.confirm('Are you sure you want to remove this member from the team?')) return
 
-    setLoading(true)
     try {
-      const response = await axios.post(
+      const response = await axios.delete(
         `${url}teams/${teamId}/unassign`,
-        { employeeId: employeeId },
         {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` },
+          data: { employeeId: employeeId }
         }
-      )
+      );
 
       if (response.status === 200 || response.status === 201) {
         showMessage('success', 'Member removed successfully!')
-        await fetchTeams() // Refresh teams to show updated member list
+        await fetchTeams()
       }
     } catch (error) {
       console.log(error)
       showMessage('error', error.response?.data?.error || 'Failed to remove member')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -177,7 +169,6 @@ const Teams = () => {
     }, 3000)
   }
 
-  // Filter out employees who are already in the team
   const getAvailableEmployees = (team) => {
     const teamEmployeeIds = team.employees?.map(emp => emp.id) || []
     return employees.filter(emp => !teamEmployeeIds.includes(emp.id))
@@ -185,7 +176,7 @@ const Teams = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 relative">
         <Header />
         <div className="py-4 px-2 sm:px-8 lg:px-20 flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
@@ -199,13 +190,10 @@ const Teams = () => {
             </button>
           </div>
 
-          {/* Message Toast */}
           {message.text && (
             <div
               className={`fixed top-20 right-4 z-50 px-6 py-3 rounded-lg shadow-lg animate-slide-in ${
-                message.type === 'success'
-                  ? 'bg-green-500 text-white'
-                  : 'bg-red-500 text-white'
+                message.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
               }`}
             >
               {message.text}
@@ -244,14 +232,14 @@ const Teams = () => {
                       <div className="flex gap-3 items-center justify-end">
                         <button
                           onClick={() => saveEdit(team.id)}
-                          className="text-green-600 hover:text-green-800 transition-colors"
+                          className="text-green-600 hover:text-green-800 transition-colors flex items-center gap-2"
                           aria-label="Save"
                         >
                           <MdCheck size={28} />
                         </button>
                         <button
                           onClick={cancelEditing}
-                          className="text-red-600 hover:text-red-800 transition-colors"
+                          className="text-red-600 hover:text-red-800 transition-colors flex items-center gap-2"
                           aria-label="Cancel"
                         >
                           <MdClose size={28} />
@@ -271,12 +259,12 @@ const Teams = () => {
                         <div className="flex items-center gap-3">
                           <MdEdit
                             onClick={() => startEditing(team)}
-                            className="w-6 h-6 text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
+                            className="w-6 h-6 text-blue-600 hover:text-blue-800 cursor-pointer transition-colors"
                             title="Edit Team"
                           />
                           <MdOutlineDeleteOutline
                             onClick={() => deleteTeam(team.id)}
-                            className="w-6 h-6 text-red-600 cursor-pointer hover:text-red-800 transition-colors"
+                            className="w-6 h-6 text-red-600 hover:text-red-800 cursor-pointer transition-colors"
                             title="Delete Team"
                           />
                         </div>
@@ -290,7 +278,7 @@ const Teams = () => {
                         </div>
                         <button
                           onClick={() => toggleAddMember(team.id)}
-                          className="flex cursor-pointer items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+                          className='flex cursor-pointer items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors'
                         >
                           <IoPersonAdd className="w-5 h-5" />
                           <span className="text-sm font-medium">
@@ -299,7 +287,6 @@ const Teams = () => {
                         </button>
                       </div>
 
-                      {/* Add Member Form */}
                       {addMemberTeamId === team.id && (
                         <div className='w-full flex flex-col gap-2 bg-blue-50 p-3 rounded-md'>
                           <label className='text-xs font-semibold text-gray-700'>Select Employee</label>
@@ -310,11 +297,7 @@ const Teams = () => {
                           >
                             <option value="">-- Select an employee --</option>
                             {getAvailableEmployees(team).map((employee) => (
-                              <option
-                                key={employee.id}
-                                value={employee.id}
-                                className="text-sm"
-                              >
+                              <option key={employee.id} value={employee.id} className="text-sm">
                                 {employee.first_name} {employee.last_name} ({employee.email})
                               </option>
                             ))}
@@ -322,15 +305,14 @@ const Teams = () => {
                           <div className='grid grid-cols-2 gap-2'>
                             <button
                               onClick={() => handleAddMember(team.id)}
-                              disabled={loading || !selectedEmployeeId}
+                              disabled={!selectedEmployeeId}
                               className='text-sm bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 border-0 rounded-md text-white py-2 font-medium transition-colors'
                             >
-                              {loading ? 'Adding...' : 'Add'}
+                              Add
                             </button>
                             <button
                               onClick={() => toggleAddMember(team.id)}
-                              disabled={loading}
-                              className='text-sm bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 border-0 rounded-md text-gray-700 py-2 font-medium transition-colors'
+                              className='text-sm bg-gray-300 hover:bg-gray-400 border-0 rounded-md text-gray-700 py-2 font-medium transition-colors'
                             >
                               Cancel
                             </button>
@@ -338,7 +320,6 @@ const Teams = () => {
                         </div>
                       )}
 
-                      {/* Employees List */}
                       <div className="mt-2">
                         <p className="text-xs font-semibold text-gray-800 mb-2">Team Members:</p>
                         <ul className="space-y-2">
@@ -356,8 +337,7 @@ const Teams = () => {
                                 </div>
                                 <button
                                   onClick={() => handleRemoveMember(team.id, emp.id)}
-                                  disabled={loading}
-                                  className="text-red-600 hover:text-red-800 disabled:text-red-300 transition-colors"
+                                  className="text-red-600 hover:text-red-800 transition-colors"
                                   title="Remove member"
                                 >
                                   <IoPersonRemove className="w-5 h-5" />

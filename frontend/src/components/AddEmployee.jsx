@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import AppContext from '../context/AppContext'
 import { RxCross2 } from "react-icons/rx";
 import axios from 'axios'
@@ -84,7 +84,7 @@ const AddEmployee = ({ setOpenAddEmployee, onAddSuccess }) => {
     }
 
     // Close on Escape key
-    React.useEffect(() => {
+    useEffect(() => {
         const handleEscape = (e) => {
             if (e.key === 'Escape') {
                 setOpenAddEmployee(false)

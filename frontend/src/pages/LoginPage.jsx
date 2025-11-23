@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import image from '../assets/hrms.jpg'
 import logo from '../assets/hrms-logo.jpg'
 import AppContext from '../context/AppContext'
@@ -14,8 +14,9 @@ const LoginPage = () => {
   const [userInfo, setUserInfo] = useState({
     orgName: "", adminName: "", email: "", password: ""
   })
-  const { url, setToken } = useContext(AppContext)
+  const { url, token, updateToken } = useContext(AppContext)
   const navigate = useNavigate()
+  
   
   const switchTxt = !isLogin ? 'Already have an account' : `Don't have an account`
   const btnTxt = isLogin ? 'Login' : 'Register'
@@ -36,7 +37,7 @@ const LoginPage = () => {
       ...prev,
       [name]: value
     }))
-    setErrMsg(null) // Clear error when user starts typing
+    setErrMsg(null)
   }
 
   const handleSubmit = async (e) => {
@@ -48,7 +49,7 @@ const LoginPage = () => {
       const response = await axios.post(`${url}auth/${isLogin ? 'login' : 'register'}`, userInfo)
       if (response.status === 200 || response.status === 201) {
         localStorage.setItem('token', response.data.token)
-        setToken(response.data.token)
+        updateToken(response.data.token)
         setUserInfo({ orgName: "", adminName: "", email: "", password: "" })
         navigate('/')
       } else {

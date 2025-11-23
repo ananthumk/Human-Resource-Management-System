@@ -21,34 +21,7 @@ A complete Node.js backend API for managing employees, teams, and organisations 
 - **Authentication:** JWT + bcrypt
 - **Other:** dotenv, cors
 
-## Project Structure
 
-```
-backend/
-├── src/
-│   ├── controllers/        # Business logic
-│   │   ├── authController.js
-│   │   ├── employeeController.js
-│   │   ├── teamController.js
-│   │   └── logController.js
-│   ├── middlewares/        # Auth & error handling
-│   │   ├── authMiddleware.js
-│   │   └── errorHandler.js
-│   ├── models/             # Database models
-│   │   └── index.js
-│   ├── routes/             # API routes
-│   │   ├── auth.js
-│   │   ├── employees.js
-│   │   ├── teams.js
-│   │   └── logs.js
-│   ├── db.js              # Database connection
-│   ├── setup.js           # Database schema setup
-│   └── index.js           # Main server file
-├── .env                   # Environment variables
-├── .env.example          # Example env file
-├── package.json
-└── README.md
-```
 
 ## Installation
 
@@ -385,7 +358,7 @@ npm run setup
 
 ### View Database
 
-Use SQLite browser or CLI:
+Use SQLite
 
 ```bash
 sqlite3 hrms.db
@@ -437,16 +410,9 @@ lsof -ti:5000 | xargs kill
 
 **JWT errors:**
 - Ensure JWT_SECRET is set in .env
-- Check token expiration (8 hours default)
+- Check token expiration (7 days)
 
 ## License
 
 ISC
 
-## Support
-
-For issues or questions, check the code comments or create an issue in the repository.
-
----
-
-Built with ❤️ for the Evallo HRMS Assignment

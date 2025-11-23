@@ -1,74 +1,74 @@
-import React from 'react'
-import Header from '../components/Header'
+import React, { useEffect, useContext, useState } from 'react';
+import Header from '../components/Header';
 import { FaSearch } from "react-icons/fa";
 import { MdEdit, MdOutlineDeleteOutline, MdAdd } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
-import { useEffect } from 'react';
-import axios from 'axios'
-import { useContext } from 'react';
-import AppContext from '../context/AppContext'
-import { useState } from 'react';
+import axios from 'axios';
+import AppContext from '../context/AppContext';
 import EditEmployee from '../components/EditEmployee';
 import AddEmployee from '../components/AddEmployee';
 import DelComponent from '../components/DelComponent';
+import { TailSpin } from 'react-loader-spinner';
 
 const Employee = () => {
-
-    const [employeeList, setEmployeeList] = useState([])
-    const [openEditEmployee, setOpenEditEmployee] = useState(false)
-    const [openAddEmployee, setOpenAddEmployee] = useState(false)
-    const [openDelEmployee, setOpenDelEmployee] = useState(false)
-    const [employee, setEmployee] = useState({})
+    const [employeeList, setEmployeeList] = useState([]);
+    const [openEditEmployee, setOpenEditEmployee] = useState(false);
+    const [openAddEmployee, setOpenAddEmployee] = useState(false);
+    const [openDelEmployee, setOpenDelEmployee] = useState(false);
+    const [employee, setEmployee] = useState({});
     const [searchQuery, setSearchQuery] = useState({
         search: "", department: ""
-    })
-    const [msg, setMsg] = useState(null)
-    const { url, token } = useContext(AppContext)
+    });
+    const [msg, setMsg] = useState(null);
+    const { url, token } = useContext(AppContext);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchEmployeeList = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(`${url}employees`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
-                })
+                });
                 if (response.status === 200 || response.status === 201) {
-                    setEmployeeList(response.data.data)
-                    console.log(response)
+                    setEmployeeList(response.data.data);
+                    console.log(response);
                 } else {
-                    console.log(response)
+                    console.log(response);
                 }
             } catch (error) {
-                console.log(error)
+                console.log(error);
+            } finally {
+                setLoading(false);
             }
         }
-
-        fetchEmployeeList()
-    }, [url, token])
+        fetchEmployeeList();
+    }, [url, token]);
 
     const handleToggle = (value) => {
         if (value === 'add') {
-            setOpenAddEmployee(prev => !prev)
-            setOpenEditEmployee(false)
-            setOpenDelEmployee(false)
+            setOpenAddEmployee(prev => !prev);
+            setOpenEditEmployee(false);
+            setOpenDelEmployee(false);
         } else if (value === 'edit') {
-            setOpenAddEmployee(false)
-            setOpenEditEmployee(true)
-            setOpenDelEmployee(false)
+            setOpenAddEmployee(false);
+            setOpenEditEmployee(true);
+            setOpenDelEmployee(false);
         } else if (value === 'del') {
-            setOpenAddEmployee(false)
-            setOpenEditEmployee(false)
-            setOpenDelEmployee(true)
+            setOpenAddEmployee(false);
+            setOpenEditEmployee(false);
+            setOpenDelEmployee(true);
         }
     }
 
     const handleSearch = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         setSearchQuery(prev => ({
             ...prev,
             [name]: value
-        }))
+        }));
     }
 
     const filterEmployeee = employeeList.filter(employee => {
@@ -150,7 +150,18 @@ const Employee = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filterEmployeee.length === 0 ? (
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={5} className="text-center py-12 flex justify-center items-center" style={{ height: '150px' }}>
+                                            <TailSpin
+                                                height={50}
+                                                width={50}
+                                                color="#3b82f6"
+                                                ariaLabel="loading-indicator"
+                                            />
+                                        </td>
+                                    </tr>
+                                ) : filterEmployeee.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="text-center py-12 text-neutral-500 text-sm">
                                             <div className='flex flex-col items-center gap-2'>
@@ -236,12 +247,11 @@ const Employee = () => {
                 </div>
             </div>
 
-            
             {openEditEmployee && <EditEmployee employee={employee} setOpenEditEmployee={setOpenEditEmployee} />}
             {openDelEmployee && <DelComponent employee={employee} setOpenDelEmployee={setOpenDelEmployee} />}
             {openAddEmployee && <AddEmployee setOpenAddEmployee={setOpenAddEmployee} />}
         </>
-    )
+    );
 }
 
-export default Employee
+export default Employee;

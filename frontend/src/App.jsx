@@ -16,17 +16,24 @@ function App() {
   
   useEffect(() => {
   const token = localStorage.getItem('token')
-  if(!token) return 
   setToken(token)
 }, [])
 
+const updateToken = (newToken) => {
+    setToken(newToken)
+    if(newToken){
+      localStorage.setItem('token', newToken)
+    } else {
+      localStorage.removeItem('token')
+    }
+  }
 
   // const url = 'http://localhost:5000/api/'
   const url = 'https://human-resource-management-system-c8rg.onrender.com/api/'
 
   return (
     <AppContext.Provider value={{
-      url: url, token: token, setToken: setToken 
+      url: url, token: token, updateToken: updateToken 
     }}>
       <Routes>
         <Route path='/' element={<ProtectedRoute element={<Dashboard />} />} />
