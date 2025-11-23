@@ -1,16 +1,106 @@
-# React + Vite
+# Human Resource Management System - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend application for the Human Resource Management System (HRMS), developed using React, React Router, and Tailwind CSS. It provides the user interface for managing employees, teams, activity logs, and authentication.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- User authentication with protected routes
+- Employee management: add, update, delete, and search employees
+- Team management: create, edit, delete teams and assign employees
+- Activity logs with search and pagination
+- Responsive design with desktop and mobile navigation
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 18+
+- React Router v6
+- Axios for HTTP requests
+- Tailwind CSS for styling
+- React Icons for icons
+- Hosted frontend on Vercel
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- Node.js (v16 or higher) and npm/yarn installed
+- Backend API running and accessible with proper URL and authentication token
+
+### Installation
+
+
+1. Install dependencies:
+
+npm install
+
+or
+yarn
+
+text
+
+2. Create a `.env` file in the root (optional) to define environment variables, e.g.:
+
+REACT_APP_API_URL='https://human-resource-management-system-c8rg.onrender.com/api/'
+
+text
+
+3. Start the development server:
+
+npm start
+
+or
+yarn start
+
+text
+
+Your app should be running at `http://localhost:3000`.
+
+## Usage
+
+- Visit `/login` to sign in.
+- Navigate through Dashboard, Employees, Teams, and Logs via the navigation bar.
+- Use the floating action button to add new employees.
+- Manage teams and assign employees.
+- Search and paginate activity logs.
+
+## Deployment
+
+- The project is deployed on Vercel.
+- To avoid 404 errors on page refresh or direct URL access, add a `vercel.json` file in the project root with the following:
+
+{
+"rewrites": [
+{ "source": "/(.*)", "destination": "/index.html" }
+]
+}
+
+text
+
+This enables Single Page Application (SPA) routing to work properly on Vercel.
+
+## Folder Structure
+
+/src
+/components # Reusable UI components (Header, AddEmployee, EditEmployee, etc.)
+/pages # Application pages (Dashboard, Employee, Teams, Logs, LoginPage)
+/context # React Context for global state (AppContext)
+/assets # Images, icons, logos
+/App.css # Global CSS styles
+/App.js # Main React component with routing
+
+text
+
+## Known Issues
+
+- Make sure your token is stored and properly loaded to prevent unauthorized access.
+- Always verify your backend API URL and endpoints.
+
+## Contributing
+
+Feel free to open issues or submit pull requests for improvements.
+
+## License
+
+This project is licensed under the MIT License.
+
+---

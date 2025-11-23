@@ -15,10 +15,11 @@ function App() {
   const [token, setToken] = useState(null)
   
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if(!token) return 
-    setToken(token)
-  })
+  const token = localStorage.getItem('token')
+  if(!token) return 
+  setToken(token)
+}, [])
+
 
   // const url = 'http://localhost:5000/api/'
   const url = 'https://human-resource-management-system-c8rg.onrender.com/api/'
