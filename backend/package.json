@@ -2,11 +2,12 @@
   "name": "hrms-backend",
   "version": "1.0.0",
   "description": "Human Resource Management System Backend",
-  "main": "src/index.js",
+  "main": "src/app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "setup": "node src/setup.js"
+    "setup": "node src/setup.js",
+    "build": "echo 'No build needed'"
   },
   "keywords": ["hrms", "hr", "backend"],
   "author": "",

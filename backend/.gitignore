@@ -3,11 +3,16 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+package-lock.json
+yarn.lock
 
 # Environment variables
 .env
 .env.local
 .env.production
+.env.development
+backend/.env
+frontend/.env
 
 # Database
 *.db
@@ -21,15 +26,46 @@ yarn-error.log*
 *.swp
 *.swo
 *~
+.project
+.classpath
+.settings/
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # Logs
 logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
 
 # Build
 dist/
 build/
+.next/
+out/
+.cache/
+.parcel-cache/
+coverage/
+
+# Testing
+.nyc_output/
+coverage/
+*.test.js.snap
+
+# Misc
+.temp/
+.tmp/
+*.swp
+*.swo
+*~

@@ -87,13 +87,18 @@ const createTables = () => {
   });
 };
 
-// Run setup
-createTables()
-  .then(() => {
-    console.log('Database setup complete');
-    process.exit(0);
-  })
-  .catch((err) => {
-    console.error('Setup failed:', err);
-    process.exit(1);
-  });
+// Run setup if executed directly (npm run setup)
+if (require.main === module) {
+  createTables()
+    .then(() => {
+      console.log(' Database setup complete');
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.error(' Setup failed:', err);
+      process.exit(1);
+    });
+}
+
+
+module.exports = { createTables };

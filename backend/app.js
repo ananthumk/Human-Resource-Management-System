@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { errorHandler } = require('./src/middlewares/errorHandler');
+const { createTables } = require('./src/setup');
 
 // Import routes
 const authRoutes = require('./src/routes/auth');
@@ -42,8 +43,22 @@ app.use((req, res) => {
 // Error handler (must be last)
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`
-      Server running at http://localhost:${PORT}
-  `);
-});
+// Initialize database tables before starting server
+const initializeServer = async () => {
+  try {
+    console.log(' Initializing database...');
+    await createTables();
+    console.log('Database initialized successfully');
+    
+    app.listen(PORT, () => {
+      console.log(`
+        Server is running at http://localhost:${PORT}
+      `);
+    });
+  } catch (error) {
+    console.error('Failed to initialize database:', error);
+    process.exit(1);
+  }
+};
+
+initializeServer();
