@@ -3,12 +3,18 @@ import AppContext from '../context/AppContext'
 import { RxCross2 } from "react-icons/rx";
 import axios from 'axios'
 
-const EditEmployee = ({ employee, setOpenEditEmployee}) => {
-
-    const [updateUser, setUpdateUser] = useState(employee)
+const EditEmployee = ({ employee, setOpenEditEmployee, onUpdateSuccess }) => {
+    const [updateUser, setUpdateUser] = useState({
+        first_name: employee.first_name || '',
+        last_name: employee.last_name || '',
+        email: employee.email || '',
+        phone: employee.phone || ''
+    })
     const [errMsg, setErrMsg] = useState(null)
+    const [successMsg, setSuccessMsg] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
-    const { url, token} = useContext(AppContext)
+    const { url, token } = useContext(AppContext)
 
     const handleUpdateUser = (e) => {
         const { value, name } = e.target
@@ -16,66 +22,208 @@ const EditEmployee = ({ employee, setOpenEditEmployee}) => {
             ...prev,
             [name]: value
         }))
+        // Clear error when user starts typing
+        if (errMsg) setErrMsg(null)
     }
 
     const handleSubmit = async (e) => {
-       e.preventDefault()
-       try {
-          const response = await axios.put(`${url}employees/${employee.id}`,updateUser, {
-             headers: {
-                Authorization: `Bearer ${token}`
-             }
-          })
-          if(response.status === 200 || response.status === 201){
-            errMsg('Update Successfully')
-            setTimeout(() => {
-                setOpenEditEmployee(false)
-            }, 2000);
-          } else {
-            errMsg(response.data.message)
-          }
-       } catch (error) {
-          setErrMsg('Something went wrong! Try again later')
-       }
+        e.preventDefault()
+        
+        // Basic validation
+        if (!updateUser.first_name.trim() || !updateUser.last_name.trim()) {
+            setErrMsg('First name and last name are required')
+            return
+        }
+
+        setIsLoading(true)
+        setErrMsg(null)
+        setSuccessMsg(null)
+
+        try {
+            const response = await axios.put(
+                `${url}employees/${employee.id}`,
+                updateUser,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            
+            if (response.status === 200 || response.status === 201) {
+                setSuccessMsg('Employee updated successfully!')
+                
+                // Call callback if provided
+                if (onUpdateSuccess) {
+                    onUpdateSuccess(response.data.data)
+                }
+                
+                // Close modal after 1.5 seconds
+                setTimeout(() => {
+                    setOpenEditEmployee(false)
+                }, 1500)
+            } else {
+                setErrMsg(response.data.message || 'Update failed')
+            }
+        } catch (error) {
+            console.error('Update error:', error)
+            setErrMsg(
+                error.response?.data?.message || 
+                'Something went wrong! Please try again later'
+            )
+        } finally {
+            setIsLoading(false)
+        }
     }
 
+    // Close on backdrop click
+    const handleBackdropClick = (e) => {
+        if (e.target === e.currentTarget) {
+            setOpenEditEmployee(false)
+        }
+    }
+
+    // Close on Escape key
+    React.useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                setOpenEditEmployee(false)
+            }
+        }
+        window.addEventListener('keydown', handleEscape)
+        return () => window.removeEventListener('keydown', handleEscape)
+    }, [setOpenEditEmployee])
+
     return (
-        <div className='fixed flex z-1 justify-center items-center bg-[rgba(0,0,0,0.5)] h-screen w-full'>
-            <div className='bg-white rounded max-w-[360px] py-8 px-3'>
-                <div className='flex justify-between items-center'>
-                <h2 className='text-lg font-medium'>Update Employee</h2>
-                <RxCross2 onClick={() =>{ setOpenEditEmployee(false)}} className='w-4 h-4 cursor-pointer' />
-                </div> 
-                <form onSubmit={handleSubmit} className='flex mt-3 flex-col gap-2'>
-                    <div className='grid grid-cols-2 gap-8'>
-                        <div>
-                            <label htmlFor='first-name' className='text-[10px] font-bold' >FIRST NAME</label>
-                            <input id="first-name" value={updateUser.first_name} name="first_name" type="text" onChange={handleUpdateUser} placeholder='Enter your first name' className='w-full py-0.5 px-1.5 text-[13px] bg-transparent border-2 border-gray-200 outline-0' />
+        <div 
+            className='fixed inset-0 z-50 flex justify-center items-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto'
+            onClick={handleBackdropClick}
+        >
+            <div className='bg-white rounded-lg shadow-2xl w-full max-w-md mx-auto my-8 animate-fadeIn'>
+                {/* Header */}
+                <div className='flex justify-between items-center px-6 py-4 border-b border-gray-200'>
+                    <h2 className='text-xl font-semibold text-gray-800'>Update Employee</h2>
+                    <button
+                        onClick={() => setOpenEditEmployee(false)}
+                        className='p-2 hover:bg-gray-100 rounded-full transition-colors duration-200'
+                        aria-label='Close modal'
+                    >
+                        <RxCross2 className='w-5 h-5 text-gray-600' />
+                    </button>
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleSubmit} className='px-6 py-5 space-y-4'>
+                    {/* Name Fields */}
+                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                        <div className='flex flex-col'>
+                            <label htmlFor='first-name' className='text-xs font-semibold text-gray-700 mb-1.5'>
+                                FIRST NAME <span className='text-red-500'>*</span>
+                            </label>
+                            <input
+                                id="first-name"
+                                value={updateUser.first_name}
+                                name="first_name"
+                                type="text"
+                                onChange={handleUpdateUser}
+                                placeholder='Enter first name'
+                                required
+                                className='px-3 py-2 text-sm bg-white border-2 border-gray-300 rounded-md outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200'
+                            />
                         </div>
-                        <div>
-                            <label htmlFor='last-name'  className='text-[10px] font-bold' >LAST NAME</label>
-                            <input id="last-name" value={updateUser.last_name} name="last_name" type="text" onChange={handleUpdateUser} placeholder='Enter your last name' className='w-full py-0.5 px-1.5 text-[13px] bg-transparent border-2 border-gray-200 outline-0' />
+                        <div className='flex flex-col'>
+                            <label htmlFor='last-name' className='text-xs font-semibold text-gray-700 mb-1.5'>
+                                LAST NAME <span className='text-red-500'>*</span>
+                            </label>
+                            <input
+                                id="last-name"
+                                value={updateUser.last_name}
+                                name="last_name"
+                                type="text"
+                                onChange={handleUpdateUser}
+                                placeholder='Enter last name'
+                                required
+                                className='px-3 py-2 text-sm bg-white border-2 border-gray-300 rounded-md outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200'
+                            />
                         </div>
                     </div>
-                    <div>
-                        <label htmlFor='email'  className='text-[10px] font-bold' >EMAIL</label>
-                        <input id="email" name="email" value={updateUser.email} type="email" onChange={handleUpdateUser} placeholder='Enter your email address' className='w-full py-0.5 px-1.5 text-[13px] bg-transparent border-2 border-gray-200 outline-0' />
+
+                    {/* Email Field */}
+                    <div className='flex flex-col'>
+                        <label htmlFor='email' className='text-xs font-semibold text-gray-700 mb-1.5'>
+                            EMAIL
+                        </label>
+                        <input
+                            id="email"
+                            name="email"
+                            value={updateUser.email}
+                            type="email"
+                            onChange={handleUpdateUser}
+                            placeholder='Enter email address'
+                            className='px-3 py-2 text-sm bg-white border-2 border-gray-300 rounded-md outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200'
+                        />
                     </div>
-                    <div>
-                        <label htmlFor='phone'  className='text-[10px] font-bold' >PHONE</label>
-                        <input id="phone" name="phone" value={updateUser.phone} type="text" onChange={handleUpdateUser} placeholder='Enter your phone number' className='w-full py-0.5 px-1.5 text-[13px] bg-transparent border-2 border-gray-200 outline-0' />
+
+                    {/* Phone Field */}
+                    <div className='flex flex-col'>
+                        <label htmlFor='phone' className='text-xs font-semibold text-gray-700 mb-1.5'>
+                            PHONE
+                        </label>
+                        <input
+                            id="phone"
+                            name="phone"
+                            value={updateUser.phone}
+                            type="tel"
+                            onChange={handleUpdateUser}
+                            placeholder='Enter phone number'
+                            className='px-3 py-2 text-sm bg-white border-2 border-gray-300 rounded-md outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200'
+                        />
                     </div>
-                    <div className='grid grid-cols-2 gap-10'>
-                        <button type="submit" className='w-full cursor-pointer py-1 px-2 flex justify-center text-[13px] rounded items-center bg-blue-500 text-white font-medium'>
-                            Update
+
+                    {/* Messages */}
+                    {errMsg && (
+                        <div className='bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm'>
+                            {errMsg}
+                        </div>
+                    )}
+                    {successMsg && (
+                        <div className='bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm'>
+                            {successMsg}
+                        </div>
+                    )}
+
+                    {/* Buttons */}
+                    <div className='grid grid-cols-2 gap-3 pt-2'>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className='w-full py-2.5 px-4 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm'
+                        >
+                            {isLoading ? (
+                                <span className='flex items-center justify-center'>
+                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Updating...
+                                </span>
+                            ) : (
+                                'Update Employee'
+                            )}
                         </button>
-                        <button onClick={() =>{ setOpenEditEmployee(false)}} className='w-full py-1 px-2 cursor-pointer flex justify-center items-center text-[13px] rounded bg-gray-300 text-gray-700 font-medium'>
+                        <button
+                            type="button"
+                            onClick={() => setOpenEditEmployee(false)}
+                            disabled={isLoading}
+                            className='w-full py-2.5 px-4 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
+                        >
                             Cancel
                         </button>
                     </div>
                 </form>
-                {errMsg && <p className='text-center text-[14px] font-semibold'>{errMsg}</p>}
             </div>
+
+        
         </div>
     )
 }
